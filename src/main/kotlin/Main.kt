@@ -1,3 +1,8 @@
+import AccountsDomain.AccountRepo
+import AccountsDomain.Operations.BlockAccount
+import AccountsDomain.Operations.CloseAccount
+import AccountsDomain.Operations.OpenAccount
+import AccountsDomain.Operations.UnblockAccount
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoDatabase
 import io.ktor.server.application.*
@@ -5,14 +10,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import operations.*
 import org.litote.kmongo.*
 import java.util.*
-import writeDomain.*
-import readDomain.startAccountReadProjection
-import readDomain.startLedgerReadProjection
+import ReadDomain.startAccountReadProjection
+import ReadDomain.startLedgerReadProjection
 import LedgersDomain.startLedgerAccountCreatedSubscriber
-import readDomain.ReadAccount
+import ReadDomain.ReadAccount
 
 fun startWebServer(esClient: EventStoreDBClient, database: MongoDatabase) {
     val repo = AccountRepo(esClient)

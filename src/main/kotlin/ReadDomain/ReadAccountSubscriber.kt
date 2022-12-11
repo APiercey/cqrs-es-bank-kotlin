@@ -1,14 +1,14 @@
-package readDomain
+package ReadDomain
 
 import Helpers.AllReadPosition
 import Helpers.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
-import events.AccountBlocked
-import events.AccountClosed
-import events.AccountCreated
-import events.AccountUnblocked
+import Events.AccountBlocked
+import Events.AccountClosed
+import Events.AccountCreated
+import Events.AccountUnblocked
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "account-read-projection"

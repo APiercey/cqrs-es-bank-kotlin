@@ -1,15 +1,15 @@
-package operations
+package AccountsDomain.Operations
 
 import com.eventstore.dbclient.EventStoreDBClient
-import events.AccountCreated
+import Events.AccountCreated
 
-class OpenAccount(private var client: EventStoreDBClient) : BaseOperation() {
+class OpenAccount(private var client: EventStoreDBClient)  {
     fun execute(uuid: String, type: String) : Boolean {
         val event = AccountCreated()
         event.uuid = uuid
         event.type = type
 
-        client.appendToStream("account-${event.uuid}", buildEventData(event)).get()
+        client.appendToStream("account-${event.uuid}", event.toEventData()).get()
 
         return true
     }

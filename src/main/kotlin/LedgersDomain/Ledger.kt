@@ -1,0 +1,5 @@
+package LedgersDomain
+
+class Ledger {
+
+}

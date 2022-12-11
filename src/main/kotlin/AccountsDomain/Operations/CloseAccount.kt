@@ -1,16 +1,15 @@
-package operations
+package AccountsDomain.Operations
 
 import com.eventstore.dbclient.EventStoreDBClient
-import events.AccountClosed
-import writeDomain.Account
+import AccountsDomain.Account
 
-class CloseAccount(private var client: EventStoreDBClient) : BaseOperation() {
+class CloseAccount(private var client: EventStoreDBClient) {
     fun execute(account: Account) : Boolean {
         account.close()
                 .forEach {
                     client.appendToStream(
                             "account-${account.uuid}",
-                            buildEventData(it)
+                        it.toEventData()
                         ).get()
                 }
 

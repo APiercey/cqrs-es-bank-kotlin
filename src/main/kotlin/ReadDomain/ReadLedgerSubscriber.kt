@@ -1,11 +1,11 @@
-package readDomain
+package ReadDomain
 
 import Helpers.AllReadPosition
 import Helpers.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
-import events.LedgerOpened
+import Events.LedgerOpened
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "ledger-read-projection"

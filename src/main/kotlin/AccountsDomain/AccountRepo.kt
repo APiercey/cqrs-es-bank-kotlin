@@ -1,12 +1,12 @@
-package writeDomain
+package AccountsDomain
 
 import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.ReadStreamOptions
 import com.eventstore.dbclient.ResolvedEvent
-import events.AccountBlocked
-import events.AccountClosed
-import events.AccountCreated
-import events.AccountUnblocked
+import Events.AccountBlocked
+import Events.AccountClosed
+import Events.AccountCreated
+import Events.AccountUnblocked
 
 class AccountRepo(private val client: EventStoreDBClient) {
     fun fetch(uuid: String): Account? {

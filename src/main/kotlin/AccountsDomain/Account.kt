@@ -1,9 +1,9 @@
-package writeDomain
+package AccountsDomain
 
-import events.AccountBlocked
-import events.AccountClosed
-import events.AccountCreated
-import events.AccountUnblocked
+import Events.AccountBlocked
+import Events.AccountClosed
+import Events.AccountCreated
+import Events.AccountUnblocked
 
 class Account() {
     var uuid: String = ""
@@ -18,7 +18,7 @@ class Account() {
         blocked = false
     }
 
-    fun close() : List<events.BaseEvent> {
+    fun close() : List<Events.BaseEvent> {
         if(!open) { throw Exception("Account Already Closed!") }
 
         return listOf(AccountClosed(uuid))

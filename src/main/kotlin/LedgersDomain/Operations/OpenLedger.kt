@@ -1,9 +1,9 @@
-package operations
+package LedgersDomain.Operations
 
 import com.eventstore.dbclient.EventStoreDBClient
-import events.LedgerOpened
+import Events.LedgerOpened
 
-class OpenLedger(private var client: EventStoreDBClient) : BaseOperation() {
+class OpenLedger(private var client: EventStoreDBClient) {
     fun execute(uuid: String, accountUuid: String) : Boolean {
         val event = LedgerOpened()
         event.uuid = uuid

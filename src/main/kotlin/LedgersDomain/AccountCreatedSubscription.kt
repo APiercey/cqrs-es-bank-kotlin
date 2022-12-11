@@ -1,13 +1,11 @@
 package LedgersDomain
 
 import Helpers.AllReadPosition
-import Helpers.StreamReadPosition
 import Helpers.allPositionRecorder
-import Helpers.streamPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
-import events.AccountCreated
-import operations.OpenLedger
+import Events.AccountCreated
+import LedgersDomain.Operations.OpenLedger
 import org.litote.kmongo.*
 import java.util.*
 

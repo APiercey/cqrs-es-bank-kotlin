@@ -1,5 +1,0 @@
-package writeDomain
-
-class Ledger {
-
-}
