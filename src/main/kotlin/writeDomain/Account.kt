@@ -18,6 +18,12 @@ class Account() {
         blocked = false
     }
 
+    fun close() : List<events.BaseEvent> {
+        if(!open) { throw Exception("Account Already Closed!") }
+
+        return listOf(AccountClosed(uuid))
+    }
+
     fun apply(event: AccountBlocked) {
         blocked = true
     }
@@ -28,9 +34,5 @@ class Account() {
 
     fun apply(event: AccountClosed) {
         open = false
-    }
-
-    override fun toString(): String {
-        return "{\"uuid\": \"$uuid\", \"type\": \"$type\", \"blocked\": $blocked, \"open\": $open}"
     }
 }

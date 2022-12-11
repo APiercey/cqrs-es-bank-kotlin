@@ -1,9 +1,5 @@
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoDatabase
-import events.AccountBlocked
-import events.AccountClosed
-import events.AccountCreated
-import events.AccountUnblocked
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -13,8 +9,10 @@ import operations.*
 import org.litote.kmongo.*
 import java.util.*
 import writeDomain.*
-
-data class ReadAccount(val uuid: String, val type: String, val blocked: Boolean, val open: Boolean)
+import readDomain.startAccountReadProjection
+import readDomain.startLedgerReadProjection
+import LedgersDomain.startLedgerAccountCreatedSubscriber
+import readDomain.ReadAccount
 
 fun startWebServer(esClient: EventStoreDBClient, database: MongoDatabase) {
     val repo = AccountRepo(esClient)
@@ -49,10 +47,17 @@ fun startWebServer(esClient: EventStoreDBClient, database: MongoDatabase) {
                 }
             }
             post("/accounts/{uuid}/close") {
-                if(closeAccountOp.execute(call.parameters["uuid"].toString())) {
+                var account = repo.fetch(call.parameters["uuid"].toString())
+                if(account == null) {
+                    call.respondText("404 Account not found")
+                    return@post
+                }
+
+                try {
+                    closeAccountOp.execute(account)
                     call.respondText("OK")
-                } else {
-                    call.respondText("An error occured")
+                } catch(e: Exception) {
+                    call.respondText(e.localizedMessage)
                 }
             }
             get("/accounts/{uuid}") {
@@ -65,59 +70,34 @@ fun startWebServer(esClient: EventStoreDBClient, database: MongoDatabase) {
                 } else {
                     call.respondText("404")
                 }
+            }
+            get("/accounts") {
+                val accounts = database
+                    .getCollection<ReadAccount>()
+                    .find()
+                    .toList()
 
+                call.respondText(accounts.json)
             }
         }
     }.start(wait = true)
 }
 
-fun startReadProjection(esClient: EventStoreDBClient, database: MongoDatabase) {
-    val listener: SubscriptionListener = object : SubscriptionListener() {
-        override fun onEvent(subscription: Subscription?, event: ResolvedEvent) {
-            if(!event.originalEvent.streamId.startsWith("account-")) { return Unit }
-
-            val col = database.getCollection<ReadAccount>()
-
-            when (event.originalEvent.eventType) {
-                "events.AccountCreated" -> {
-                    var event = event.originalEvent.getEventDataAs(AccountCreated::class.java)
-                    col.insertOne(ReadAccount(event.uuid, event.type, false, true))
-                }
-                "events.AccountBlocked" -> {
-                    var event = event.originalEvent.getEventDataAs(AccountBlocked::class.java)
-                    col.updateOne(ReadAccount::uuid eq event.uuid, set(ReadAccount::blocked setTo true))
-                }
-                "events.AccountUnblocked" -> {
-                    var event = event.originalEvent.getEventDataAs(AccountUnblocked::class.java)
-                    col.updateOne(ReadAccount::uuid eq event.uuid, set(ReadAccount::blocked setTo false))
-                }
-                "events.AccountClosed" -> {
-                    var event = event.originalEvent.getEventDataAs(AccountClosed::class.java)
-                    col.updateOne(ReadAccount::uuid eq event.uuid, set(ReadAccount::open setTo false))
-                }
-            }
-        }
-    }
-
-    esClient.subscribeToAll(
-        listener,
-        SubscribeToAllOptions.get().fromStart()
-    )
-}
-
 fun main(args: Array<String>) {
-    val kMongoClient = KMongo.createClient("mongodb://127.0.0.1:27017") //get com.mongodb.MongoClient new instance
-    val database = kMongoClient.getDatabase("test") //normal java driver usage
+    val mongoClient = KMongo.createClient("mongodb://127.0.0.1:27017") //get com.mongodb.MongoClient new instance
+    val database = mongoClient.getDatabase("test") //normal java driver usage
 
     val settings: EventStoreDBClientSettings = EventStoreDBConnectionString.parse("esdb://localhost:2113?tls=false")
     val client: EventStoreDBClient = EventStoreDBClient.create(settings)
-
 
     var httpServer = Thread() {
         startWebServer(client, database)
     }
 
-    startReadProjection(client, database)
+    startAccountReadProjection(client, mongoClient)
+    startLedgerReadProjection(client, mongoClient)
+
+    startLedgerAccountCreatedSubscriber(client, mongoClient)
 
     httpServer.start()
     httpServer.join()

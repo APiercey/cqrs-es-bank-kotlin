@@ -9,7 +9,7 @@ import events.AccountCreated
 import events.AccountUnblocked
 
 class AccountRepo(private val client: EventStoreDBClient) {
-    fun fetch(uuid: String): Account {
+    fun fetch(uuid: String): Account? {
         val account = Account()
 
         getEntityEvents("account-${uuid}").forEach {
@@ -19,6 +19,10 @@ class AccountRepo(private val client: EventStoreDBClient) {
                 "events.AccountUnblocked" -> account.apply(it.originalEvent.getEventDataAs(AccountUnblocked::class.java))
                 "events.AccountClosed" -> account.apply(it.originalEvent.getEventDataAs(AccountClosed::class.java))
             }
+        }
+
+        if(account.uuid == "") {
+            return null
         }
 
         return account
