@@ -17,7 +17,7 @@ private fun handleEvent(accounts: MongoCollection<ReadAccount>, event : Resolved
     when (event.originalEvent.eventType) {
         "events.AccountCreated" -> {
             val originalEvent = event.originalEvent.getEventDataAs(AccountCreated::class.java)
-            accounts.insertOne(ReadAccount(originalEvent.uuid, originalEvent.type, blocked = false, open = true))
+            accounts.insertOne(ReadAccount(originalEvent.uuid, originalEvent.type, blocked = false, open = true, 0))
         }
         "events.AccountBlocked" -> {
             val originalEvent = event.originalEvent.getEventDataAs(AccountBlocked::class.java)
@@ -47,13 +47,8 @@ fun startAccountReadProjection(esClient: EventStoreDBClient, mongoClient: MongoC
 
         override fun onEvent(subscription: Subscription?, event: ResolvedEvent) {
             mongoSession.use { clientSession ->
-//                clientSession.startTransaction()
-
                 handleEvent(accounts, event)
-
                 recordPosition(event)
-
-//                clientSession.commitTransaction()
             }
         }
     }
