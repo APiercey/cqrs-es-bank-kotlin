@@ -6,12 +6,7 @@ import AccountsDomain.Account
 class CloseAccount(private var client: EventStoreDBClient) {
     fun execute(account: Account) : Boolean {
         account.close()
-                .forEach {
-                    client.appendToStream(
-                            "account-${account.uuid}",
-                        it.toEventData()
-                        ).get()
-                }
+//        accountRepo.save(account)
 
         return true
     }

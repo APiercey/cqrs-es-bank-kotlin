@@ -1,12 +1,8 @@
 package AccountsDomain
 
-import com.eventstore.dbclient.EventStoreDBClient
-import com.eventstore.dbclient.ReadStreamOptions
-import com.eventstore.dbclient.ResolvedEvent
-import Events.AccountBlocked
-import Events.AccountClosed
-import Events.AccountCreated
-import Events.AccountUnblocked
+import Events.*
+import com.eventstore.dbclient.*
+
 
 class AccountRepo(private val client: EventStoreDBClient) {
     fun fetch(uuid: String): Account? {
@@ -18,6 +14,7 @@ class AccountRepo(private val client: EventStoreDBClient) {
                 "events.AccountBlocked" -> account.apply(it.originalEvent.getEventDataAs(AccountBlocked::class.java))
                 "events.AccountUnblocked" -> account.apply(it.originalEvent.getEventDataAs(AccountUnblocked::class.java))
                 "events.AccountClosed" -> account.apply(it.originalEvent.getEventDataAs(AccountClosed::class.java))
+                "events.LedgerAssigned" -> account.apply(it.originalEvent.getEventDataAs(LedgerAssigned::class.java))
             }
         }
 
@@ -26,6 +23,21 @@ class AccountRepo(private val client: EventStoreDBClient) {
         }
 
         return account
+    }
+
+    fun save(account : Account) {
+        val eventsIterator : MutableIterator<EventData> = account
+            .getMutations()
+            .map { it.toEventData() }
+            .toMutableList()
+            .iterator()
+
+        // TODO: Make this use optimistic locking
+        val options = AppendToStreamOptions
+            .get()
+            .expectedRevision(ExpectedRevision.any())
+
+        client.appendToStream("account-${account.uuid}", options, eventsIterator).get()
     }
 
     private fun getEntityEvents(streamId: String): List<ResolvedEvent> {
