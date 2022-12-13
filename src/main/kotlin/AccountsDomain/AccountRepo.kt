@@ -37,6 +37,7 @@ class AccountRepo(private val client: EventStoreDBClient) {
             .get()
             .expectedRevision(ExpectedRevision.any())
 
+
         client.appendToStream("account-${account.uuid}", options, eventsIterator).get()
     }
 

@@ -23,13 +23,35 @@ fun startCommandProxy(appTree : AppTree) {
             override fun onEvent(subscription: PersistentSubscription, retryCount: Int, event: ResolvedEvent) {
                 val originalEvent = event.originalEvent
 
-                when(originalEvent.eventType) {
-                    "OpenAccount" -> {
-                        val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.OpenAccount::class.java)
-                        appTree.accountsDomainCommandHandler().handle(cmd)
+                try {
+                    when(originalEvent.eventType) {
+                        "OpenAccount" -> {
+                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.OpenAccount::class.java)
+                            appTree.accountsDomainCommandHandler().handle(cmd)
+                        }
+                        "AssignLedger" -> {
+                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.AssignLedger::class.java)
+                            appTree.accountsDomainCommandHandler().handle(cmd)
+                        }
+                        "BlockAccount" -> {
+                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.BlockAccount::class.java)
+                            appTree.accountsDomainCommandHandler().handle(cmd)
+                        }
+                        "UnblockAccount" -> {
+                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.UnblockAccount::class.java)
+                            appTree.accountsDomainCommandHandler().handle(cmd)
+                        }
+                        "CloseAccount" -> {
+                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.CloseAccount::class.java)
+                            appTree.accountsDomainCommandHandler().handle(cmd)
+                        }
                     }
-                    else -> null
+                } catch(e : Exception) {
+                    println("##########")
+                    println(e.message)
+                    println("##########")
                 }
+
             }
 
             override fun onError(subscription: PersistentSubscription, throwable: Throwable) {

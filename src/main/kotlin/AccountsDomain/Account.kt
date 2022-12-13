@@ -43,32 +43,42 @@ class Account() : Aggregate() {
         enqueue(AccountClosed(uuid))
     }
 
-    fun apply(event: AccountCreated) {
+    fun isClosed() : Boolean { return !open }
+
+    fun isBlocked() : Boolean { return blocked }
+
+    fun hasLedgerAssigned() : Boolean { return currentLedgerUuid != "" }
+
+    override fun apply(event: BaseEvent) {
+        when(event) {
+            is AccountCreated -> applyEvent(event)
+            is AccountBlocked -> applyEvent(event)
+            is AccountUnblocked -> applyEvent(event)
+            is AccountClosed -> applyEvent(event)
+            else -> null
+        }
+    }
+
+    private fun applyEvent(event: AccountCreated) {
         uuid = event.uuid
         type = event.type
         open = true
         blocked = false
     }
 
-    fun apply(event: AccountBlocked) {
+    private fun applyEvent(event: AccountBlocked) {
         blocked = true
     }
 
-    fun apply(event: AccountUnblocked) {
+    private fun applyEvent(event: AccountUnblocked) {
         blocked = false
     }
 
-    fun apply(event: AccountClosed) {
+    private fun applyEvent(event: AccountClosed) {
         open = false
     }
 
-    fun apply(event: LedgerAssigned) {
+    private fun applyEvent(event: LedgerAssigned) {
         currentLedgerUuid = event.ledgerUuid
     }
-
-    fun isClosed() : Boolean { return !open }
-
-    fun isBlocked() : Boolean { return blocked }
-
-    fun hasLedgerAssigned() : Boolean { return currentLedgerUuid != "" }
 }

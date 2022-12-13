@@ -5,7 +5,6 @@ import AccountsDomain.Commands.*
 class CommandHandler(val accountRepo : AccountRepo) {
     fun handle(cmd: OpenAccount) {
         val account = Account(cmd.accountUuid, cmd.accountType)
-
         accountRepo.save(account)
     }
 

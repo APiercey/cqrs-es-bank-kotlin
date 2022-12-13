@@ -1,6 +1,6 @@
 import Events.BaseEvent
 
-open class Aggregate {
+abstract class Aggregate {
     private var _changes : List<BaseEvent> = mutableListOf()
 
     fun getMutations() : List<BaseEvent> {
@@ -16,7 +16,5 @@ open class Aggregate {
         _changes = _changes.plus(event)
     }
 
-    open fun apply(event : BaseEvent) {
-
-    }
+    abstract fun apply(event : BaseEvent)
 }
