@@ -1,4 +1,4 @@
-package Events
+package Architecture
 
 import com.eventstore.dbclient.EventData
 

@@ -3,19 +3,21 @@ package LedgersDomain
 import Helpers.AllReadPosition
 import Helpers.allPositionRecorder
 import com.eventstore.dbclient.*
-import com.mongodb.client.MongoClient
 import Events.AccountCreated
-import LedgersDomain.Operations.OpenLedger
+import LedgersDomain.Commands.OpenLedger
 import org.litote.kmongo.*
 import java.util.*
+import AppTree
 
 private const val SUBSCRIBER_NAME = "account-created-ledger-open"
 
-fun startLedgerAccountCreatedSubscriber(esClient: EventStoreDBClient, mongoClient: MongoClient) {
-    val database = mongoClient.getDatabase("test")
+fun startLedgerAccountCreatedSubscriber(appTree : AppTree) {
+    val database = appTree.mongoDatabase()
+    val mongoClient = appTree.mongoClient()
+    val esClient = appTree.esClient()
     val allReadPositions = database.getCollection<AllReadPosition>()
     val recordPosition = allPositionRecorder(allReadPositions, SUBSCRIBER_NAME)
-    val openLedger = OpenLedger(esClient)
+    val bus = appTree.bus()
 
     val listener: SubscriptionListener = object : SubscriptionListener() {
         val mongoSession = mongoClient.startSession()
@@ -25,7 +27,7 @@ fun startLedgerAccountCreatedSubscriber(esClient: EventStoreDBClient, mongoClien
                 if(!event.originalEvent.eventType.startsWith("events.AccountCreated")) { return Unit }
                 val originalEvent = event.originalEvent.getEventDataAs(AccountCreated::class.java)
 
-                println(openLedger.execute(UUID.randomUUID().toString(), originalEvent.uuid))
+                bus.send(OpenLedger(UUID.randomUUID().toString(), originalEvent.uuid))
                 recordPosition(event)
             }
         }

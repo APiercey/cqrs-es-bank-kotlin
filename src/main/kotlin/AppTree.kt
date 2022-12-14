@@ -1,5 +1,6 @@
 import AccountsDomain.AccountRepo
-import Commands.Bus
+import Architecture.Bus
+import LedgersDomain.LedgerRepo
 import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.EventStoreDBClientSettings
 import com.eventstore.dbclient.EventStoreDBConnectionString
@@ -33,8 +34,16 @@ class AppTree {
         return AccountRepo(esClient())
     }
 
+    fun ledgerRepo() : LedgerRepo {
+        return LedgerRepo(esClient())
+    }
+
     fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler {
         return AccountsDomain.CommandHandler(accountRepo())
+    }
+
+    fun ledgersDomainCommandHandler() : LedgersDomain.CommandHandler {
+        return LedgersDomain.CommandHandler(ledgerRepo())
     }
 
     fun bus() : Bus {

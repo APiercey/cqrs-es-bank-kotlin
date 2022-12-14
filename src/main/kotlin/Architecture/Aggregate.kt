@@ -1,4 +1,4 @@
-import Events.BaseEvent
+package Architecture
 
 abstract class Aggregate {
     private var _changes : List<BaseEvent> = mutableListOf()

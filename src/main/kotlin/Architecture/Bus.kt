@@ -1,6 +1,7 @@
-package Commands
+package Architecture
 
 
+import Architecture.Command
 import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.EventData
 

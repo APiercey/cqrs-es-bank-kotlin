@@ -13,7 +13,6 @@ fun main(args: Array<String>) {
         startWebServer(appTree)
     }
 
-//    buildCommandGroup(appTree.esPersistentClient())
     startCommandProxy(appTree)
 
     startAccountReadProjection(esClient, mongoClient)
@@ -21,7 +20,7 @@ fun main(args: Array<String>) {
     startTransactionsReadProjection(esClient, mongoClient)
 
     startLedgerOpenedAssignLedgerSubscriber(appTree)
-    startLedgerAccountCreatedSubscriber(esClient, mongoClient)
+    startLedgerAccountCreatedSubscriber(appTree)
 
     httpServer.start()
     httpServer.join()

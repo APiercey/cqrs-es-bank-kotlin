@@ -45,6 +45,18 @@ fun startCommandProxy(appTree : AppTree) {
                             val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.CloseAccount::class.java)
                             appTree.accountsDomainCommandHandler().handle(cmd)
                         }
+                        "OpenLedger" -> {
+                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.OpenLedger::class.java)
+                            appTree.ledgersDomainCommandHandler().handle(cmd)
+                        }
+                        "DepositFunds" -> {
+                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.DepositFunds::class.java)
+                            appTree.ledgersDomainCommandHandler().handle(cmd)
+                        }
+                        "WithdrawFunds" -> {
+                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.WithdrawFunds::class.java)
+                            appTree.ledgersDomainCommandHandler().handle(cmd)
+                        }
                     }
                 } catch(e : Exception) {
                     println("##########")

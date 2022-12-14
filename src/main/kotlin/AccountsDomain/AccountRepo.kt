@@ -39,6 +39,7 @@ class AccountRepo(private val client: EventStoreDBClient) {
 
 
         client.appendToStream("account-${account.uuid}", options, eventsIterator).get()
+        account.clearMutations()
     }
 
     private fun getEntityEvents(streamId: String): List<ResolvedEvent> {

@@ -1,9 +1,9 @@
 package AccountsDomain
 
-import Aggregate
+import Architecture.Aggregate
 import Events.*
 import AccountsDomain.Commands.*
-import io.ktor.websocket.*
+import Architecture.BaseEvent
 
 class Account() : Aggregate() {
     var uuid : String = ""
