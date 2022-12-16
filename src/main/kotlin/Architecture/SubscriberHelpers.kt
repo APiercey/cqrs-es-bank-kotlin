@@ -1,4 +1,4 @@
-package Helpers
+package Architecture
 
 import com.eventstore.dbclient.ResolvedEvent
 import com.eventstore.dbclient.StreamPosition

@@ -1,7 +1,7 @@
 package AccountsDomain
 
-import Helpers.AllReadPosition
-import Helpers.allPositionRecorder
+import Architecture.AllReadPosition
+import Architecture.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import org.litote.kmongo.*

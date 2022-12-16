@@ -1,11 +1,12 @@
 package ReadDomain
 
-import Helpers.AllReadPosition
-import Helpers.allPositionRecorder
+import Architecture.AllReadPosition
+import Architecture.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import Events.TransactionRequested
+import Events.TransactionCompleted
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "transactions-read-projection"
@@ -18,8 +19,8 @@ private fun handleEvent(transactions: MongoCollection<ReadTransaction>, event : 
             val originalEvent = event.originalEvent.getEventDataAs(TransactionRequested::class.java)
             transactions.insertOne(ReadTransaction(originalEvent.uuid, originalEvent.senderUuid, originalEvent.receiverUuid, originalEvent.amount, "PENDING"))
         }
-        "events.TransactionRequested" -> {
-            val originalEvent = event.originalEvent.getEventDataAs(TransactionRequested::class.java)
+        "events.TransactionCompleted" -> {
+            val originalEvent = event.originalEvent.getEventDataAs(TransactionCompleted::class.java)
             transactions.updateOne(ReadTransaction::uuid eq originalEvent.uuid, set(ReadTransaction::status setTo "COMPLETED"))
         }
         else -> null

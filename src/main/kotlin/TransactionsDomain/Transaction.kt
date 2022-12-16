@@ -17,7 +17,7 @@ class Transaction() : Aggregate() {
     }
 
     fun handle(cmd : CompleteTransaction) {
-        if(!isCompleted()) { throw Exception("Transaction already completed!") }
+        if(isCompleted()) { throw Exception("Transaction already completed!") }
 
         enqueue(TransactionCompleted(uuid))
     }

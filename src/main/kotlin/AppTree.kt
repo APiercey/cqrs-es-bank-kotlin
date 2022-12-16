@@ -1,6 +1,6 @@
 import AccountsDomain.AccountRepo
 import Architecture.Bus
-import TransactionsDomain.SagaRepo
+import TransactionsDomain.AccountTransfer.AccountTransferSagaRepo
 import TransactionsDomain.TransactionRepo
 import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.EventStoreDBClientSettings
@@ -39,8 +39,8 @@ class AppTree {
         return TransactionRepo(esClient())
     }
 
-    fun sagaRepo() : SagaRepo {
-        return SagaRepo(esClient(), bus())
+    fun accountTransferSagaRepo() : AccountTransferSagaRepo {
+        return AccountTransferSagaRepo(esClient(), bus())
     }
 
     fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler {

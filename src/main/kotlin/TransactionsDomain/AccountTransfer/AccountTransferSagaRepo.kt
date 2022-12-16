@@ -1,11 +1,11 @@
-package TransactionsDomain
+package TransactionsDomain.AccountTransfer
 
 import Architecture.Bus
 import Events.*
 import com.eventstore.dbclient.*
 
 
-class SagaRepo(private val client: EventStoreDBClient, private val bus : Bus) {
+class AccountTransferSagaRepo(private val client: EventStoreDBClient, private val bus : Bus) {
     fun fetch(uuid: String): AccountTransferSaga? {
         val saga = AccountTransferSaga()
 

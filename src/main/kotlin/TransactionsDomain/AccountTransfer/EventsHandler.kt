@@ -1,11 +1,11 @@
-package TransactionsDomain
+package TransactionsDomain.AccountTransfer
 
 import AccountsDomain.buildCatchupSubscriber
 import AppTree
 import Events.*
 
 fun startAccountTransferEventsHandler(appTree: AppTree) {
-    val sagaRepo = appTree.sagaRepo()
+    val sagaRepo = appTree.accountTransferSagaRepo()
 
     buildCatchupSubscriber(
         appTree.esClient(),

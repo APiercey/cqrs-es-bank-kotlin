@@ -1,12 +1,11 @@
 package ReadDomain
 
 import Events.*
-import Helpers.AllReadPosition
-import Helpers.allPositionRecorder
+import Architecture.AllReadPosition
+import Architecture.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
-import io.ktor.server.application.*
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "account-read-projection"

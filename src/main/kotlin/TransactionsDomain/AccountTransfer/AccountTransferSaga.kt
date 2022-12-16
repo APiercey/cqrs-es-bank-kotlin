@@ -1,4 +1,4 @@
-package TransactionsDomain
+package TransactionsDomain.AccountTransfer
 
 import AccountsDomain.Commands.*
 import Architecture.BaseEvent

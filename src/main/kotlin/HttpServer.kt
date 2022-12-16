@@ -1,5 +1,6 @@
 import AccountsDomain.Commands.*
 import ReadDomain.ReadAccount
+import ReadDomain.ReadTransaction
 import TransactionsDomain.Commands.RequestTransaction
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -72,6 +73,25 @@ fun startWebServer(appTree: AppTree) {
                     .toList()
 
                 call.respondText(accounts.json)
+            }
+            get("/transactions") {
+                val transactions = database
+                    .getCollection<ReadTransaction>()
+                    .find()
+                    .toList()
+
+                call.respondText(transactions.json)
+            }
+            get("/transactions/{uuid}") {
+                val transaction : ReadTransaction ? = database
+                    .getCollection<ReadTransaction>()
+                    .findOne(ReadTransaction::uuid eq call.parameters["uuid"].toString())
+
+                if(transaction != null) {
+                    call.respondText(transaction.json)
+                } else {
+                    call.respondText("404")
+                }
             }
             post("/transactions/account_transfer") {
                 val body = gson.fromJson(call.receiveText(), HashMap::class.java)
