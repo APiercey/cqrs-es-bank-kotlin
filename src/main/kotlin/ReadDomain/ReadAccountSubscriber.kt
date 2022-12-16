@@ -1,19 +1,19 @@
 package ReadDomain
 
+import Events.*
 import Helpers.AllReadPosition
 import Helpers.allPositionRecorder
 import com.eventstore.dbclient.*
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
-import Events.AccountBlocked
-import Events.AccountClosed
-import Events.AccountCreated
-import Events.AccountUnblocked
+import io.ktor.server.application.*
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "account-read-projection"
 
 private fun handleEvent(accounts: MongoCollection<ReadAccount>, event : ResolvedEvent) {
+    if(event.originalEvent.streamId.startsWith("saga-")) { return@handleEvent }
+
     when (event.originalEvent.eventType) {
         "events.AccountCreated" -> {
             val originalEvent = event.originalEvent.getEventDataAs(AccountCreated::class.java)
@@ -30,6 +30,18 @@ private fun handleEvent(accounts: MongoCollection<ReadAccount>, event : Resolved
         "events.AccountClosed" -> {
             val originalEvent = event.originalEvent.getEventDataAs(AccountClosed::class.java)
             accounts.updateOne(ReadAccount::uuid eq originalEvent.uuid, set(ReadAccount::open setTo false))
+        }
+        "events.FundsDeposited" -> {
+            val originalEvent = event.originalEvent.getEventDataAs(FundsDeposited::class.java)
+            val account : ReadAccount = accounts.findOne(ReadAccount::uuid eq originalEvent.accountUuid) ?: throw Exception("Account not found")
+            val newBalance = account.balance + originalEvent.amount
+            accounts.updateOne(ReadAccount::uuid eq originalEvent.accountUuid, set(ReadAccount::balance setTo newBalance))
+        }
+        "events.FundsWithdrawn" -> {
+            val originalEvent = event.originalEvent.getEventDataAs(FundsWithdrawn::class.java)
+            val account : ReadAccount = accounts.findOne(ReadAccount::uuid eq originalEvent.accountUuid) ?: throw Exception("Account not found")
+            val newBalance = account.balance - originalEvent.amount
+            accounts.updateOne(ReadAccount::uuid eq originalEvent.accountUuid, set(ReadAccount::balance setTo newBalance))
         }
         else -> null
     }

@@ -3,7 +3,6 @@ package AccountsDomain
 import Events.*
 import com.eventstore.dbclient.*
 
-
 class AccountRepo(private val client: EventStoreDBClient) {
     fun fetch(uuid: String): Account? {
         val account = Account()
@@ -14,7 +13,8 @@ class AccountRepo(private val client: EventStoreDBClient) {
                 "events.AccountBlocked" -> account.apply(it.originalEvent.getEventDataAs(AccountBlocked::class.java))
                 "events.AccountUnblocked" -> account.apply(it.originalEvent.getEventDataAs(AccountUnblocked::class.java))
                 "events.AccountClosed" -> account.apply(it.originalEvent.getEventDataAs(AccountClosed::class.java))
-                "events.LedgerAssigned" -> account.apply(it.originalEvent.getEventDataAs(LedgerAssigned::class.java))
+                "events.FundsDeposited" -> account.apply(it.originalEvent.getEventDataAs(FundsDeposited::class.java))
+                "events.FundsWithdrawn" -> account.apply(it.originalEvent.getEventDataAs(FundsWithdrawn::class.java))
             }
         }
 
@@ -36,7 +36,6 @@ class AccountRepo(private val client: EventStoreDBClient) {
         val options = AppendToStreamOptions
             .get()
             .expectedRevision(ExpectedRevision.any())
-
 
         client.appendToStream("account-${account.uuid}", options, eventsIterator).get()
         account.clearMutations()

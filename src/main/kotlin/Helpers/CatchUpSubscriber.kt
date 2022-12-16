@@ -22,8 +22,14 @@ fun buildCatchupSubscriber(
         override fun onEvent(subscription: Subscription?, event: ResolvedEvent) {
             // TODO: Transaction?
             mongoSession.use { clientSession ->
-                handleEvent(event)
-                recordPosition(event)
+                try {
+                    handleEvent(event)
+                    recordPosition(event)
+                } catch(e : Exception) {
+                    println("Unhandled EventHandler Exception")
+                    println(e.message)
+                }
+
             }
         }
     }

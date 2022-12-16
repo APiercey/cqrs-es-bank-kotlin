@@ -1,4 +1,8 @@
-import Events.AccountCreated
+import AccountsDomain.Commands.DepositFunds
+import AccountsDomain.Commands.WithdrawFunds
+import AccountsDomain.buildCatchupSubscriber
+import TransactionsDomain.Commands.CompleteTransaction
+import TransactionsDomain.Commands.RequestTransaction
 import com.eventstore.dbclient.*
 
 private const val commandsStream : String = "commands"
@@ -16,62 +20,56 @@ fun buildCommandGroup(esClient: EventStoreDBPersistentSubscriptionsClient) {
 fun startCommandProxy(appTree : AppTree) {
     val esClient = appTree.esPersistentClient()
 
-    esClient.subscribeToStream(
-        commandsStream,
-        commandsGroup,
-        object : PersistentSubscriptionListener() {
-            override fun onEvent(subscription: PersistentSubscription, retryCount: Int, event: ResolvedEvent) {
-                val originalEvent = event.originalEvent
+    buildCatchupSubscriber(appTree.esClient(), appTree.mongoClient(), "command-handler-group") { event ->
+        val originalEvent = event.originalEvent
 
-                try {
-                    when(originalEvent.eventType) {
-                        "OpenAccount" -> {
-                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.OpenAccount::class.java)
-                            appTree.accountsDomainCommandHandler().handle(cmd)
-                        }
-                        "AssignLedger" -> {
-                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.AssignLedger::class.java)
-                            appTree.accountsDomainCommandHandler().handle(cmd)
-                        }
-                        "BlockAccount" -> {
-                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.BlockAccount::class.java)
-                            appTree.accountsDomainCommandHandler().handle(cmd)
-                        }
-                        "UnblockAccount" -> {
-                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.UnblockAccount::class.java)
-                            appTree.accountsDomainCommandHandler().handle(cmd)
-                        }
-                        "CloseAccount" -> {
-                            val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.CloseAccount::class.java)
-                            appTree.accountsDomainCommandHandler().handle(cmd)
-                        }
-                        "OpenLedger" -> {
-                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.OpenLedger::class.java)
-                            appTree.ledgersDomainCommandHandler().handle(cmd)
-                        }
-                        "DepositFunds" -> {
-                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.DepositFunds::class.java)
-                            appTree.ledgersDomainCommandHandler().handle(cmd)
-                        }
-                        "WithdrawFunds" -> {
-                            val cmd = originalEvent.getEventDataAs(LedgersDomain.Commands.WithdrawFunds::class.java)
-                            appTree.ledgersDomainCommandHandler().handle(cmd)
-                        }
-                    }
-                } catch(e : Exception) {
-                    println("##########")
-                    println(e.message)
-                    println("##########")
+        try {
+            when (originalEvent.eventType) {
+                "OpenAccount" -> {
+                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.OpenAccount::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
                 }
 
-            }
+                "BlockAccount" -> {
+                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.BlockAccount::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
+                }
 
-            override fun onError(subscription: PersistentSubscription, throwable: Throwable) {
-                println("Subscription was dropped due to " + throwable.message)
-            }
+                "UnblockAccount" -> {
+                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.UnblockAccount::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
+                }
 
-//            override fun onCancelled(subscription: PersistentSubscription) {
-//                println("Subscription is cancelled")
-//            }
-        })
+                "CloseAccount" -> {
+                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.CloseAccount::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
+                }
+
+                "DepositFunds" -> {
+                    val cmd = originalEvent.getEventDataAs(DepositFunds::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
+                }
+
+                "WithdrawFunds" -> {
+                    val cmd = originalEvent.getEventDataAs(WithdrawFunds::class.java)
+                    appTree.accountsDomainCommandHandler().handle(cmd)
+                }
+
+                "RequestTransaction" -> {
+                    val cmd = originalEvent.getEventDataAs(RequestTransaction::class.java)
+                    appTree.transactionsDomainCommandHandler().handle(cmd)
+                }
+
+                "CompleteTransaction" -> {
+                    val cmd = originalEvent.getEventDataAs(CompleteTransaction::class.java)
+                    appTree.transactionsDomainCommandHandler().handle(cmd)
+                }
+            }
+        } catch (e: Exception) {
+            println("##########")
+            println(e.message)
+            println("##########")
+            return@buildCatchupSubscriber
+        }
+    }
 }

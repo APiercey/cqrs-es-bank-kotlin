@@ -1,15 +1,15 @@
 package Architecture
 
-interface Saga {
-    val uuid : String
+abstract class Saga {
+    var uuid : String = ""
 
-    fun transition(event : BaseEvent)
+    abstract fun transition(event : BaseEvent)
 
-    fun uncomittedEvents() : List<BaseEvent>
+    abstract fun uncomittedEvents() : List<BaseEvent>
 
-    fun clearUncomittedEvents()
+    abstract fun clearUncomittedEvents()
 
-    fun undispatchedCommands() : List<Command>
+    abstract fun undispatchedCommands() : List<Command>
 
-    fun clearUndispatchedCommands()
+    abstract fun clearUndispatchedCommands()
 }

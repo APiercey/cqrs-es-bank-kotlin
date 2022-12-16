@@ -11,16 +11,10 @@ class Account() : Aggregate() {
     var open : Boolean = false
     var blocked : Boolean = false
     var currentLedgerUuid : String = ""
+    var balance : Int = 0
 
     constructor(uuid: String = "", type: String = "") : this() {
         enqueue(AccountCreated(uuid, type))
-    }
-
-    fun handle(cmd : AssignLedger) {
-        if(isClosed()) { throw Exception("Account is closed") }
-        if(hasLedgerAssigned()) { throw Exception("Account already has a ledger") }
-
-        enqueue(LedgerAssigned(uuid, cmd.ledgerUuid))
     }
 
     fun handle(cmd : BlockAccount) {
@@ -43,11 +37,19 @@ class Account() : Aggregate() {
         enqueue(AccountClosed(uuid))
     }
 
+    fun handle(cmd : WithdrawFunds) {
+        if((balance - cmd.amount) < 0) { throw Exception("Not enough funds") }
+
+        enqueue(FundsWithdrawn(uuid, cmd.amount, cmd.corrolationId))
+    }
+
+    fun handle(cmd : DepositFunds) {
+        enqueue(FundsDeposited(uuid, cmd.amount, cmd.corrolationId))
+    }
+
     fun isClosed() : Boolean { return !open }
 
     fun isBlocked() : Boolean { return blocked }
-
-    fun hasLedgerAssigned() : Boolean { return currentLedgerUuid != "" }
 
     override fun apply(event: BaseEvent) {
         when(event) {
@@ -55,6 +57,8 @@ class Account() : Aggregate() {
             is AccountBlocked -> applyEvent(event)
             is AccountUnblocked -> applyEvent(event)
             is AccountClosed -> applyEvent(event)
+            is FundsDeposited -> applyEvent(event)
+            is FundsWithdrawn -> applyEvent(event)
             else -> null
         }
     }
@@ -78,7 +82,11 @@ class Account() : Aggregate() {
         open = false
     }
 
-    private fun applyEvent(event: LedgerAssigned) {
-        currentLedgerUuid = event.ledgerUuid
+    private fun applyEvent(event: FundsWithdrawn) {
+        balance -= event.amount
+    }
+
+    private fun applyEvent(event: FundsDeposited) {
+        balance += event.amount
     }
 }

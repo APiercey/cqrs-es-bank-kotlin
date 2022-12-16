@@ -1,11 +1,6 @@
-import AccountsDomain.Commands.BlockAccount
-import AccountsDomain.Commands.CloseAccount
-import AccountsDomain.Commands.OpenAccount
-import AccountsDomain.Commands.UnblockAccount
-import LedgersDomain.Commands.*
-import TransactionsDomain.Operations.RequestTransaction
-
+import AccountsDomain.Commands.*
 import ReadDomain.ReadAccount
+import TransactionsDomain.Commands.RequestTransaction
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -20,10 +15,7 @@ import java.util.*
 import com.google.gson.Gson
 
 fun startWebServer(appTree: AppTree) {
-    val esClient = appTree.esClient()
     val database = appTree.mongoDatabase()
-
-    val requestTransactionOp = RequestTransaction(esClient)
     val bus = appTree.bus()
 
     embeddedServer(Netty, port = 8080) {
@@ -48,6 +40,20 @@ fun startWebServer(appTree: AppTree) {
                 bus.send(CloseAccount(call.parameters["uuid"].toString()))
                 call.respondText("OK")
             }
+            post("/accounts/{uuid}/deposit") {
+                val body = gson.fromJson(call.receiveText(), HashMap::class.java)
+                val amount = (body["amount"] as? Double ?: 0).toInt()
+
+                bus.send(DepositFunds(call.parameters["uuid"].toString(), amount))
+                call.respondText("OK")
+            }
+            post("/accounts/{uuid}/withdraw") {
+                val body = gson.fromJson(call.receiveText(), HashMap::class.java)
+                val amount = (body["amount"] as? Double ?: 0).toInt()
+
+                bus.send(WithdrawFunds(call.parameters["uuid"].toString(), amount))
+                call.respondText("OK")
+            }
             get("/accounts/{uuid}") {
                 val account : ReadAccount ? = database
                     .getCollection<ReadAccount>()
@@ -67,22 +73,20 @@ fun startWebServer(appTree: AppTree) {
 
                 call.respondText(accounts.json)
             }
-            post("/accounts/{debtor_uuid}/transactions") {
+            post("/transactions/account_transfer") {
                 val body = gson.fromJson(call.receiveText(), HashMap::class.java)
                 val transactionUuid = UUID.randomUUID().toString()
 
-                val result = requestTransactionOp.execute(
+                val cmd = RequestTransaction(
                     transactionUuid,
-                    body["creditor_uuid"].toString(),
-                    call.parameters["debtor_uuid"].toString(),
-                    body["amount"] as? Int ?: 0
+                    body["sender_uuid"].toString(),
+                    body["receiver_uuid"].toString(),
+                    (body["amount"] as? Double ?: 0).toInt()
                 )
 
-                if(result) {
-                    call.respondText("{\"uuid\": \"$transactionUuid\"}")
-                } else {
-                    call.respondText("An error occured")
-                }
+                bus.send(cmd)
+
+                call.respondText("{\"uuid\": \"$transactionUuid\"}")
             }
         }
     }.start(wait = true)

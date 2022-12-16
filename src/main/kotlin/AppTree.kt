@@ -1,6 +1,7 @@
 import AccountsDomain.AccountRepo
 import Architecture.Bus
-import LedgersDomain.LedgerRepo
+import TransactionsDomain.SagaRepo
+import TransactionsDomain.TransactionRepo
 import com.eventstore.dbclient.EventStoreDBClient
 import com.eventstore.dbclient.EventStoreDBClientSettings
 import com.eventstore.dbclient.EventStoreDBConnectionString
@@ -34,16 +35,20 @@ class AppTree {
         return AccountRepo(esClient())
     }
 
-    fun ledgerRepo() : LedgerRepo {
-        return LedgerRepo(esClient())
+    fun transactionRepo() : TransactionRepo {
+        return TransactionRepo(esClient())
+    }
+
+    fun sagaRepo() : SagaRepo {
+        return SagaRepo(esClient(), bus())
     }
 
     fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler {
         return AccountsDomain.CommandHandler(accountRepo())
     }
 
-    fun ledgersDomainCommandHandler() : LedgersDomain.CommandHandler {
-        return LedgersDomain.CommandHandler(ledgerRepo())
+    fun transactionsDomainCommandHandler() : TransactionsDomain.CommandHandler {
+        return TransactionsDomain.CommandHandler(transactionRepo())
     }
 
     fun bus() : Bus {

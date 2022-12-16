@@ -1,8 +1,6 @@
-import AccountsDomain.startLedgerOpenedAssignLedgerSubscriber
 import ReadDomain.startAccountReadProjection
-import ReadDomain.startLedgerReadProjection
 import ReadDomain.startTransactionsReadProjection
-import LedgersDomain.startLedgerAccountCreatedSubscriber
+import TransactionsDomain.startAccountTransferEventsHandler
 
 fun main(args: Array<String>) {
     val appTree : AppTree = AppTree()
@@ -13,14 +11,11 @@ fun main(args: Array<String>) {
         startWebServer(appTree)
     }
 
+//    buildCommandGroup(appTree.esPersistentClient())
     startCommandProxy(appTree)
-
     startAccountReadProjection(esClient, mongoClient)
-    startLedgerReadProjection(esClient, mongoClient)
     startTransactionsReadProjection(esClient, mongoClient)
-
-    startLedgerOpenedAssignLedgerSubscriber(appTree)
-    startLedgerAccountCreatedSubscriber(appTree)
+    startAccountTransferEventsHandler(appTree)
 
     httpServer.start()
     httpServer.join()

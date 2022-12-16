@@ -11,12 +11,18 @@ import org.litote.kmongo.*
 private const val SUBSCRIBER_NAME = "transactions-read-projection"
 
 private fun handleEvent(transactions: MongoCollection<ReadTransaction>, event : ResolvedEvent) {
+    if(event.originalEvent.streamId.startsWith("saga-")) { return@handleEvent }
+
     when (event.originalEvent.eventType) {
         "events.TransactionRequested" -> {
             val originalEvent = event.originalEvent.getEventDataAs(TransactionRequested::class.java)
-            transactions.insertOne(ReadTransaction(originalEvent.uuid, originalEvent.creditorUuid, originalEvent.debtorUuid, originalEvent.amount, "PENDING"))
+            transactions.insertOne(ReadTransaction(originalEvent.uuid, originalEvent.senderUuid, originalEvent.receiverUuid, originalEvent.amount, "PENDING"))
         }
-        else -> println(event.originalEvent.eventType)
+        "events.TransactionRequested" -> {
+            val originalEvent = event.originalEvent.getEventDataAs(TransactionRequested::class.java)
+            transactions.updateOne(ReadTransaction::uuid eq originalEvent.uuid, set(ReadTransaction::status setTo "COMPLETED"))
+        }
+        else -> null
     }
 }
 

@@ -8,12 +8,6 @@ class CommandHandler(val accountRepo : AccountRepo) {
         accountRepo.save(account)
     }
 
-    fun handle(cmd: AssignLedger) {
-        val account = fetchAccount(cmd.accountUuid)
-        account.handle(cmd)
-        accountRepo.save(account)
-    }
-
     fun handle(cmd: BlockAccount) {
         val account = fetchAccount(cmd.accountUuid)
         account.handle(cmd)
@@ -27,6 +21,18 @@ class CommandHandler(val accountRepo : AccountRepo) {
     }
 
     fun handle(cmd: CloseAccount) {
+        val account = fetchAccount(cmd.accountUuid)
+        account.handle(cmd)
+        accountRepo.save(account)
+    }
+
+    fun handle(cmd: WithdrawFunds) {
+        val account = fetchAccount(cmd.accountUuid)
+        account.handle(cmd)
+        accountRepo.save(account)
+    }
+
+    fun handle(cmd: DepositFunds) {
         val account = fetchAccount(cmd.accountUuid)
         account.handle(cmd)
         accountRepo.save(account)
