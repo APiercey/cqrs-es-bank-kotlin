@@ -1,4 +1,6 @@
 import AccountsDomain.AccountRepo
+import Implementations.ESAccountRepo
+import Implementations.ESTransactionRepo
 import Architecture.Bus
 import TransactionsDomain.AccountTransfer.AccountTransferSagaRepo
 import TransactionsDomain.TransactionRepo
@@ -11,47 +13,36 @@ import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.KMongo
 
 class AppTree {
-    fun esStoreSettings() : EventStoreDBClientSettings {
-        return EventStoreDBConnectionString.parse("esdb://localhost:2113?tls=false")
-    }
+    val esStoreSettings : EventStoreDBClientSettings = EventStoreDBConnectionString.parse("esdb://localhost:2113?tls=false")
+    fun esStoreSettings() : EventStoreDBClientSettings { return esStoreSettings }
 
-    fun mongoClient() : MongoClient {
-        return KMongo.createClient("mongodb://127.0.0.1:27017")
-    }
+    val mongoClient : MongoClient = KMongo.createClient("mongodb://127.0.0.1:27017")
+    fun mongoClient() : MongoClient { return mongoClient }
 
-    fun mongoDatabase(): MongoDatabase {
-        return mongoClient().getDatabase("test")
-    }
+    val mongoDatabase : MongoDatabase = mongoClient().getDatabase("test")
+    fun mongoDatabase(): MongoDatabase { return mongoDatabase }
 
-    fun esClient() : EventStoreDBClient {
-        return EventStoreDBClient.create(esStoreSettings())
-    }
+    val esClient : EventStoreDBClient = EventStoreDBClient.create(esStoreSettings())
+    fun esClient() : EventStoreDBClient { return esClient }
 
-    fun esPersistentClient() : EventStoreDBPersistentSubscriptionsClient {
-        return EventStoreDBPersistentSubscriptionsClient.create(esStoreSettings())
-    }
+    val esPersistentClient : EventStoreDBPersistentSubscriptionsClient = EventStoreDBPersistentSubscriptionsClient.create(esStoreSettings())
+    fun esPersistentClient() : EventStoreDBPersistentSubscriptionsClient { return esPersistentClient }
 
-    fun accountRepo() : AccountRepo {
-        return AccountRepo(esClient())
-    }
+    val accountRepo : AccountRepo = ESAccountRepo(esClient())
+    fun accountRepo() : AccountRepo { return accountRepo }
 
-    fun transactionRepo() : TransactionRepo {
-        return TransactionRepo(esClient())
-    }
+    val transactionRepo : TransactionRepo = ESTransactionRepo(esClient())
+    fun transactionRepo() : TransactionRepo { return transactionRepo }
 
-    fun accountTransferSagaRepo() : AccountTransferSagaRepo {
-        return AccountTransferSagaRepo(esClient(), bus())
-    }
+    val accountTransferSagaRepo : AccountTransferSagaRepo = AccountTransferSagaRepo(esClient(), bus())
+    fun accountTransferSagaRepo() : AccountTransferSagaRepo { return accountTransferSagaRepo }
 
-    fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler {
-        return AccountsDomain.CommandHandler(accountRepo())
-    }
+    val accountsDomainCommandHandler : AccountsDomain.CommandHandler = AccountsDomain.CommandHandler(accountRepo())
+    fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler { return accountsDomainCommandHandler }
 
-    fun transactionsDomainCommandHandler() : TransactionsDomain.CommandHandler {
-        return TransactionsDomain.CommandHandler(transactionRepo())
-    }
+    val transactionsDomainCommandHandler : TransactionsDomain.CommandHandler = TransactionsDomain.CommandHandler(transactionRepo())
+    fun transactionsDomainCommandHandler() : TransactionsDomain.CommandHandler { return transactionsDomainCommandHandler }
 
-    fun bus() : Bus {
-        return Bus(esClient())
-    }
+    val bus : Bus = Bus(esClient())
+    fun bus() : Bus { return bus }
 }

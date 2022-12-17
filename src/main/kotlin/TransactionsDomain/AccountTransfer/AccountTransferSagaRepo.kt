@@ -4,7 +4,6 @@ import Architecture.Bus
 import Events.*
 import com.eventstore.dbclient.*
 
-
 class AccountTransferSagaRepo(private val client: EventStoreDBClient, private val bus : Bus) {
     fun fetch(uuid: String): AccountTransferSaga? {
         val saga = AccountTransferSaga()

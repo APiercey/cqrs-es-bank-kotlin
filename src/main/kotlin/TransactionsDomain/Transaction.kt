@@ -26,7 +26,6 @@ class Transaction() : Aggregate() {
         when(event) {
             is TransactionRequested -> applyEvent(event)
             is TransactionCompleted -> applyEvent(event)
-            else -> null
         }
     }
 
