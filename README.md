@@ -1,5 +1,16 @@
+<img src="kotlin-bank.png" width="100%" alt="I am ZARDOZ">
 # Kotlin Bank
 Banking software written in Kotlin. Built using CQRS and EventSourcing patterns.
+
+The purpose is to illustrate patterns how to achieve a number of patterns. This application implements:
+- EventSorucing to write and project Aggregate states
+- Sagas, to multi-aggregate transactions
+- Asynchronous Commands
+- Write models, enforcing business variants
+- Read models, using Document/object storage
+- Stream programming
+
+It also explores a few Kotlin features for fun :)!
 
 ## Dependencies
 There are only two dependencies outside of this project. MongoDB and EventStoreDB.
