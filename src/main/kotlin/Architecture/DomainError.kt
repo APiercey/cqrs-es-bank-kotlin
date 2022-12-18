@@ -1,3 +1,3 @@
 package Architecture
 
-class DomainError(message: String, val corrolationId: String): Exception(message)
+class DomainError(message: String, val correlationId: String): Exception(message)

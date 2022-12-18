@@ -18,6 +18,7 @@ class AccountTransferSaga() : Saga {
     private var senderUuid : String = ""
     private var receiverUuid : String = ""
     private var amount : Int = 0
+    private var correlationId : String = ""
     private var sagaTerminal : Boolean = false
 
     override fun transition(event : BaseEvent) {
@@ -29,26 +30,27 @@ class AccountTransferSaga() : Saga {
                 receiverUuid = event.receiverUuid
                 senderUuid = event.senderUuid
                 amount = event.amount
+                correlationId = event.correlationId
 
-                send(WithdrawFunds(senderUuid, amount, uuid))
+                send(WithdrawFunds(senderUuid, amount, correlationId))
             }
             is FundsWithdrawn -> {
-                send(DepositFunds(receiverUuid, amount, uuid))
+                send(DepositFunds(receiverUuid, amount, correlationId))
             }
             is FundsDeposited -> {
-                send(CompleteTransaction(uuid))
+                send(CompleteTransaction(uuid, correlationId))
             }
             is TransactionCompleted -> {
                 sagaTerminal = true
             }
             is CapturedDomainError -> {
                 if(event.originalCommandName == "WithdrawFunds") {
-                    send(FailTransaction(uuid, uuid))
+                    send(FailTransaction(uuid, correlationId))
                 }
                 if(event.originalCommandName == "DepositFunds") {
-                    send(FailTransaction(uuid, uuid))
+                    send(FailTransaction(uuid, correlationId))
                     // Return funds
-                    send(DepositFunds(senderUuid, amount, uuid))
+                    send(DepositFunds(senderUuid, amount, correlationId))
                 }
             }
             is TransactionFailed -> {

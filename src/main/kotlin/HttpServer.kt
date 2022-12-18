@@ -101,7 +101,8 @@ fun startWebServer(appTree: AppTree) {
                     transactionUuid,
                     body["sender_uuid"].toString(),
                     body["receiver_uuid"].toString(),
-                    (body["amount"] as? Double ?: 0).toInt()
+                    (body["amount"] as? Double ?: 0).toInt(),
+                    transactionUuid
                 )
 
                 bus.send(cmd)

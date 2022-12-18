@@ -14,40 +14,40 @@ class Account() : Aggregate() {
     var currentLedgerUuid : String = ""
     var balance : Int = 0
 
-    constructor(uuid: String = "", type: String = "", corrolationId : String = "") : this() {
-        enqueue(AccountCreated(uuid, type, corrolationId))
+    constructor(uuid: String = "", type: String = "", correlationId : String = "") : this() {
+        enqueue(AccountCreated(uuid, type, correlationId))
     }
 
     fun handle(cmd : BlockAccount) {
         if(isClosed()) { throw DomainError("Account is closed", "") }
         if(isBlocked()) { return@handle }
 
-        enqueue(AccountBlocked(uuid, cmd.corrolationId))
+        enqueue(AccountBlocked(uuid, cmd.correlationId))
     }
 
     fun handle(cmd : UnblockAccount) {
         if(isClosed()) { throw DomainError("Account is closed!", "") }
         if(!isBlocked()) { return@handle }
 
-        enqueue(AccountUnblocked(uuid, cmd.corrolationId))
+        enqueue(AccountUnblocked(uuid, cmd.correlationId))
     }
 
     fun handle(cmd : CloseAccount) {
         if(!open) { throw DomainError("Account Already Closed!", "") }
 
-        enqueue(AccountClosed(uuid, cmd.corrolationId))
+        enqueue(AccountClosed(uuid, cmd.correlationId))
     }
 
     fun handle(cmd : WithdrawFunds) {
-        if(isClosed()) { throw DomainError("Account is closed", cmd.corrolationId) }
-        if((balance - cmd.amount) < 0) { throw DomainError("Not enough funds", cmd.corrolationId) }
+        if(isClosed()) { throw DomainError("Account is closed", cmd.correlationId) }
+        if((balance - cmd.amount) < 0) { throw DomainError("Not enough funds", cmd.correlationId) }
 
-        enqueue(FundsWithdrawn(uuid, cmd.amount, cmd.corrolationId))
+        enqueue(FundsWithdrawn(uuid, cmd.amount, cmd.correlationId))
     }
 
     fun handle(cmd : DepositFunds) {
-        if(isClosed()) { throw DomainError("Account is closed", cmd.corrolationId) }
-        enqueue(FundsDeposited(uuid, cmd.amount, cmd.corrolationId))
+        if(isClosed()) { throw DomainError("Account is closed", cmd.correlationId) }
+        enqueue(FundsDeposited(uuid, cmd.amount, cmd.correlationId))
     }
 
     fun isClosed() : Boolean { return !open }

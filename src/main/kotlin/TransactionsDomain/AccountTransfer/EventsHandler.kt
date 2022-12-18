@@ -25,21 +25,21 @@ fun startAccountTransferEventsHandler(appTree: AppTree) {
             }
             "events.FundsWithdrawn" -> {
                 val originalEvent = event.originalEvent.getEventDataAs(FundsWithdrawn::class.java)
-                val saga = sagaRepo.fetch(originalEvent.corrolationId) ?: return@buildCatchupSubscriber
+                val saga = sagaRepo.fetch(originalEvent.correlationId) ?: return@buildCatchupSubscriber
 
                 saga.transition(originalEvent)
                 sagaRepo.save(saga)
             }
             "events.FundsDeposited" -> {
                 val originalEvent = event.originalEvent.getEventDataAs(FundsDeposited::class.java)
-                val saga = sagaRepo.fetch(originalEvent.corrolationId) ?: return@buildCatchupSubscriber
+                val saga = sagaRepo.fetch(originalEvent.correlationId) ?: return@buildCatchupSubscriber
 
                 saga.transition(originalEvent)
                 sagaRepo.save(saga)
             }
             "CapturedDomainError" -> {
                 val originalEvent = event.originalEvent.getEventDataAs(CapturedDomainError::class.java)
-                val saga = sagaRepo.fetch(originalEvent.corrolationId) ?: return@buildCatchupSubscriber
+                val saga = sagaRepo.fetch(originalEvent.correlationId) ?: return@buildCatchupSubscriber
 
                 saga.transition(originalEvent)
                 sagaRepo.save(saga)

@@ -13,20 +13,20 @@ class Transaction() : Aggregate() {
     var amount : Int = 0
     var status : String = ""
 
-    constructor(uuid: String = "", senderUuid: String = "", receiverUuid: String = "", amount: Int = 0) : this() {
-        enqueue(TransactionRequested(uuid, senderUuid, receiverUuid, amount))
+    constructor(uuid: String = "", senderUuid: String = "", receiverUuid: String = "", amount: Int = 0, correlationId : String = "") : this() {
+        enqueue(TransactionRequested(uuid, senderUuid, receiverUuid, amount, correlationId))
     }
 
     fun handle(cmd : CompleteTransaction) {
-        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.corrolationId) }
+        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.correlationId) }
 
-        enqueue(TransactionCompleted(uuid, cmd.corrolationId))
+        enqueue(TransactionCompleted(uuid, cmd.correlationId))
     }
 
     fun handle(cmd : FailTransaction) {
-        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.corrolationId) }
+        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.correlationId) }
 
-        enqueue(TransactionFailed(uuid, cmd.corrolationId))
+        enqueue(TransactionFailed(uuid, cmd.correlationId))
     }
 
     override fun apply(event: BaseEvent) {
