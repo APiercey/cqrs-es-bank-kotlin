@@ -1,4 +1,5 @@
-<img src="kotlin-bank.png" width="100%" alt="I am ZARDOZ">
+<img src="kotlin-bank.png" width="50%" alt="I am ZARDOZ">
+
 # Kotlin Bank
 Banking software written in Kotlin. Built using CQRS and EventSourcing patterns.
 
