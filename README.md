@@ -1,9 +1,9 @@
-<img src="kotlin-bank.png" width="100%" alt="I am ZARDOZ">
+<img src="kotlin-bank.png" width="50%" alt="I am ZARDOZ">
 # Kotlin Bank
 Banking software written in Kotlin. Built using CQRS and EventSourcing patterns.
 
 The purpose is to illustrate patterns how to achieve a number of patterns. This application implements:
-- EventSorucing to write and project Aggregate states
+- EventSourcing to write and project Aggregate states
 - Sagas, to multi-aggregate transactions
 - Asynchronous Commands
 - Write models, enforcing business variants
