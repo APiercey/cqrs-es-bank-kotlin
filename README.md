@@ -190,6 +190,6 @@ GET /transactions
 Returns a list of transactions accounts. Transactions can either be `PENDING`, `COMPLETED`, or `FAILED`.
 
 ```
-GET /transactions/{account_uuid}
+GET /transactions/{transaction_uuid}
 ```
-Returns an account.
+Returns a transaction.
