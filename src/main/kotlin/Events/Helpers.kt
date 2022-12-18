@@ -13,6 +13,7 @@ fun deserialize(event : ResolvedEvent) : BaseEvent {
         "events.FundsWithdrawn" -> event.originalEvent.getEventDataAs(FundsWithdrawn::class.java)
         "events.TransactionRequested" -> event.originalEvent.getEventDataAs(TransactionRequested::class.java)
         "events.TransactionCompleted" -> event.originalEvent.getEventDataAs(TransactionCompleted::class.java)
+        "events.TransactionFailed" -> event.originalEvent.getEventDataAs(TransactionFailed::class.java)
         else -> throw Exception("Unknown Event")
     }
 }

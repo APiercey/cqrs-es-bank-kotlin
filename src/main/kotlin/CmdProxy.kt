@@ -1,8 +1,9 @@
-import AccountsDomain.Commands.DepositFunds
-import AccountsDomain.Commands.WithdrawFunds
+import Architecture.DomainError
+import Architecture.Command
+import AccountsDomain.Commands.*
+import TransactionsDomain.Commands.*
 import AccountsDomain.buildCatchupSubscriber
-import TransactionsDomain.Commands.CompleteTransaction
-import TransactionsDomain.Commands.RequestTransaction
+import Architecture.CapturedDomainError
 import com.eventstore.dbclient.*
 
 private const val commandsStream : String = "commands"
@@ -17,54 +18,44 @@ fun buildCommandGroup(esClient: EventStoreDBPersistentSubscriptionsClient) {
             .fromStart());
 }
 
+private fun buildCommand(event : ResolvedEvent) : Command? {
+    val originalEvent = event.originalEvent
+
+    return when (originalEvent.eventType) {
+        "OpenAccount" -> originalEvent.getEventDataAs(OpenAccount::class.java)
+        "BlockAccount" -> originalEvent.getEventDataAs(BlockAccount::class.java)
+        "UnblockAccount" -> originalEvent.getEventDataAs(UnblockAccount::class.java)
+        "CloseAccount" -> originalEvent.getEventDataAs(CloseAccount::class.java)
+        "DepositFunds" -> originalEvent.getEventDataAs(DepositFunds::class.java)
+        "WithdrawFunds" -> originalEvent.getEventDataAs(WithdrawFunds::class.java)
+        "RequestTransaction" -> originalEvent.getEventDataAs(RequestTransaction::class.java)
+        "CompleteTransaction" -> originalEvent.getEventDataAs(CompleteTransaction::class.java)
+        "FailTransaction" -> originalEvent.getEventDataAs(FailTransaction::class.java)
+        else -> null
+    }
+}
+
 fun startCommandProxy(appTree : AppTree) {
-    val esClient = appTree.esPersistentClient()
+    val accountsDomainCommandHandler = appTree.accountsDomainCommandHandler()
+    val transactionsDomainCommandHandler = appTree.transactionsDomainCommandHandler()
 
     buildCatchupSubscriber(appTree.esClient(), appTree.mongoClient(), "command-handler-group") { event ->
-        val originalEvent = event.originalEvent
+        val cmd : Command = buildCommand(event) ?: return@buildCatchupSubscriber
 
         try {
-            when (originalEvent.eventType) {
-                "OpenAccount" -> {
-                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.OpenAccount::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "BlockAccount" -> {
-                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.BlockAccount::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "UnblockAccount" -> {
-                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.UnblockAccount::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "CloseAccount" -> {
-                    val cmd = originalEvent.getEventDataAs(AccountsDomain.Commands.CloseAccount::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "DepositFunds" -> {
-                    val cmd = originalEvent.getEventDataAs(DepositFunds::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "WithdrawFunds" -> {
-                    val cmd = originalEvent.getEventDataAs(WithdrawFunds::class.java)
-                    appTree.accountsDomainCommandHandler().handle(cmd)
-                }
-
-                "RequestTransaction" -> {
-                    val cmd = originalEvent.getEventDataAs(RequestTransaction::class.java)
-                    appTree.transactionsDomainCommandHandler().handle(cmd)
-                }
-
-                "CompleteTransaction" -> {
-                    val cmd = originalEvent.getEventDataAs(CompleteTransaction::class.java)
-                    appTree.transactionsDomainCommandHandler().handle(cmd)
-                }
+            when (cmd) {
+                is OpenAccount -> accountsDomainCommandHandler.handle(cmd)
+                is BlockAccount -> accountsDomainCommandHandler.handle(cmd)
+                is UnblockAccount -> accountsDomainCommandHandler.handle(cmd)
+                is CloseAccount -> accountsDomainCommandHandler.handle(cmd)
+                is DepositFunds -> accountsDomainCommandHandler.handle(cmd)
+                is WithdrawFunds -> accountsDomainCommandHandler.handle(cmd)
+                is RequestTransaction -> transactionsDomainCommandHandler.handle(cmd)
+                is CompleteTransaction -> transactionsDomainCommandHandler.handle(cmd)
+                is FailTransaction -> transactionsDomainCommandHandler.handle(cmd)
             }
+        } catch (e: DomainError) {
+            appTree.bus.sendError(CapturedDomainError(e.localizedMessage, e.corrolationId, cmd.name()))
         } catch (e: Exception) {
             println("##########")
             println(e.message)

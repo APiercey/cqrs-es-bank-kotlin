@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import Events.TransactionRequested
 import Events.TransactionCompleted
+import Events.TransactionFailed
 import org.litote.kmongo.*
 
 private const val SUBSCRIBER_NAME = "transactions-read-projection"
@@ -22,6 +23,10 @@ private fun handleEvent(transactions: MongoCollection<ReadTransaction>, event : 
         "events.TransactionCompleted" -> {
             val originalEvent = event.originalEvent.getEventDataAs(TransactionCompleted::class.java)
             transactions.updateOne(ReadTransaction::uuid eq originalEvent.uuid, set(ReadTransaction::status setTo "COMPLETED"))
+        }
+        "events.TransactionFailed" -> {
+            val originalEvent = event.originalEvent.getEventDataAs(TransactionFailed::class.java)
+            transactions.updateOne(ReadTransaction::uuid eq originalEvent.uuid, set(ReadTransaction::status setTo "FAILED"))
         }
         else -> null
     }

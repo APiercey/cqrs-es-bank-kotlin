@@ -1,6 +1,7 @@
 import AccountsDomain.AccountRepo
 import Implementations.ESAccountRepo
 import Implementations.ESTransactionRepo
+import Implementations.ESAccountTransferSagaRepo
 import Architecture.Bus
 import TransactionsDomain.AccountTransfer.AccountTransferSagaRepo
 import TransactionsDomain.TransactionRepo
@@ -34,9 +35,6 @@ class AppTree {
     val transactionRepo : TransactionRepo = ESTransactionRepo(esClient())
     fun transactionRepo() : TransactionRepo { return transactionRepo }
 
-    val accountTransferSagaRepo : AccountTransferSagaRepo = AccountTransferSagaRepo(esClient(), bus())
-    fun accountTransferSagaRepo() : AccountTransferSagaRepo { return accountTransferSagaRepo }
-
     val accountsDomainCommandHandler : AccountsDomain.CommandHandler = AccountsDomain.CommandHandler(accountRepo())
     fun accountsDomainCommandHandler() : AccountsDomain.CommandHandler { return accountsDomainCommandHandler }
 
@@ -45,4 +43,7 @@ class AppTree {
 
     val bus : Bus = Bus(esClient())
     fun bus() : Bus { return bus }
+
+    val accountTransferSagaRepo : AccountTransferSagaRepo = ESAccountTransferSagaRepo(esClient(), bus)
+    fun accountTransferSagaRepo() : AccountTransferSagaRepo { return accountTransferSagaRepo }
 }

@@ -4,7 +4,7 @@ import AccountsDomain.Commands.*
 
 class CommandHandler(val accountRepo : AccountRepo) {
     fun handle(cmd: OpenAccount) {
-        val account = Account(cmd.accountUuid, cmd.accountType)
+        val account = Account(cmd.accountUuid, cmd.accountType, cmd.corrolationId)
         accountRepo.save(account)
     }
 

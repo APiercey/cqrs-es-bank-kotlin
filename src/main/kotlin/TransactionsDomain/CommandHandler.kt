@@ -1,7 +1,6 @@
 package TransactionsDomain
 
-import TransactionsDomain.Commands.CompleteTransaction
-import TransactionsDomain.Commands.RequestTransaction
+import TransactionsDomain.Commands.*
 
 class CommandHandler(private val transactionRepo : TransactionRepo) {
     fun handle(cmd: RequestTransaction) {
@@ -9,6 +8,11 @@ class CommandHandler(private val transactionRepo : TransactionRepo) {
         transactionRepo.save(transaction)
     }
     fun handle(cmd: CompleteTransaction) {
+        val transaction = transactionRepo.fetch(cmd.transactionUuid) ?: throw Exception("Transaction not found")
+        transaction.handle(cmd)
+        transactionRepo.save(transaction)
+    }
+    fun handle(cmd: FailTransaction) {
         val transaction = transactionRepo.fetch(cmd.transactionUuid) ?: throw Exception("Transaction not found")
         transaction.handle(cmd)
         transactionRepo.save(transaction)

@@ -3,6 +3,7 @@ package TransactionsDomain.AccountTransfer
 import AccountsDomain.buildCatchupSubscriber
 import AppTree
 import Events.*
+import Architecture.CapturedDomainError
 
 fun startAccountTransferEventsHandler(appTree: AppTree) {
     val sagaRepo = appTree.accountTransferSagaRepo()
@@ -31,6 +32,13 @@ fun startAccountTransferEventsHandler(appTree: AppTree) {
             }
             "events.FundsDeposited" -> {
                 val originalEvent = event.originalEvent.getEventDataAs(FundsDeposited::class.java)
+                val saga = sagaRepo.fetch(originalEvent.corrolationId) ?: return@buildCatchupSubscriber
+
+                saga.transition(originalEvent)
+                sagaRepo.save(saga)
+            }
+            "CapturedDomainError" -> {
+                val originalEvent = event.originalEvent.getEventDataAs(CapturedDomainError::class.java)
                 val saga = sagaRepo.fetch(originalEvent.corrolationId) ?: return@buildCatchupSubscriber
 
                 saga.transition(originalEvent)

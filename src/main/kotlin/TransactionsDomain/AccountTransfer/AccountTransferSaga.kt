@@ -2,22 +2,27 @@ package TransactionsDomain.AccountTransfer
 
 import AccountsDomain.Commands.*
 import Architecture.BaseEvent
+import Architecture.CapturedDomainError
 import Architecture.Command
 import Architecture.Saga
-import Events.FundsDeposited
-import Events.FundsWithdrawn
-import Events.TransactionRequested
+import Events.*
 import TransactionsDomain.Commands.CompleteTransaction
+import TransactionsDomain.Commands.FailTransaction
 
-class AccountTransferSaga() : Saga() {
+class AccountTransferSaga() : Saga {
+    override var uuid: String = ""
+
     private var uncomittedEvents : List<BaseEvent> = mutableListOf()
     private var undispatchedCommands : List<Command> = mutableListOf()
 
     private var senderUuid : String = ""
     private var receiverUuid : String = ""
     private var amount : Int = 0
+    private var sagaTerminal : Boolean = false
 
     override fun transition(event : BaseEvent) {
+        if(sagaTerminal) { return@transition }
+
         when(event) {
             is TransactionRequested -> {
                 uuid = event.uuid
@@ -33,9 +38,25 @@ class AccountTransferSaga() : Saga() {
             is FundsDeposited -> {
                 send(CompleteTransaction(uuid))
             }
+            is TransactionCompleted -> {
+                sagaTerminal = true
+            }
+            is CapturedDomainError -> {
+                if(event.originalCommandName == "WithdrawFunds") {
+                    send(FailTransaction(uuid, uuid))
+                }
+                if(event.originalCommandName == "DepositFunds") {
+                    send(FailTransaction(uuid, uuid))
+                    // Return funds
+                    send(DepositFunds(senderUuid, amount, uuid))
+                }
+            }
+            is TransactionFailed -> {
+                sagaTerminal = true
+            }
         }
 
-        uncomittedEvents = uncomittedEvents.plus(event)
+        record(event)
     }
 
     override fun uncomittedEvents(): List<BaseEvent> {
@@ -56,5 +77,9 @@ class AccountTransferSaga() : Saga() {
 
     private fun send(cmd : Command) {
         undispatchedCommands = undispatchedCommands.plus(cmd)
+    }
+
+    private fun record(event : BaseEvent) {
+        uncomittedEvents = uncomittedEvents.plus(event)
     }
 }

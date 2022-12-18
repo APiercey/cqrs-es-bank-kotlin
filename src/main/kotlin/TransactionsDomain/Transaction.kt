@@ -2,6 +2,7 @@ package TransactionsDomain
 
 import Architecture.Aggregate
 import Architecture.BaseEvent
+import Architecture.DomainError
 import Events.*
 import TransactionsDomain.Commands.*
 
@@ -17,15 +18,22 @@ class Transaction() : Aggregate() {
     }
 
     fun handle(cmd : CompleteTransaction) {
-        if(isCompleted()) { throw Exception("Transaction already completed!") }
+        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.corrolationId) }
 
-        enqueue(TransactionCompleted(uuid))
+        enqueue(TransactionCompleted(uuid, cmd.corrolationId))
+    }
+
+    fun handle(cmd : FailTransaction) {
+        if(isCompleted()) { throw DomainError("Transaction already completed!", cmd.corrolationId) }
+
+        enqueue(TransactionFailed(uuid, cmd.corrolationId))
     }
 
     override fun apply(event: BaseEvent) {
         when(event) {
             is TransactionRequested -> applyEvent(event)
             is TransactionCompleted -> applyEvent(event)
+            is TransactionFailed -> applyEvent(event)
         }
     }
 
@@ -39,6 +47,10 @@ class Transaction() : Aggregate() {
 
     private fun applyEvent(event: TransactionCompleted) {
         status = "COMPLETED"
+    }
+
+    private fun applyEvent(event: TransactionFailed) {
+        status = "FAILED"
     }
 
     private fun isCompleted() : Boolean {

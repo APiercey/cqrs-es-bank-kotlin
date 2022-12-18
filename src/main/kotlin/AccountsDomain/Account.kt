@@ -1,6 +1,7 @@
 package AccountsDomain
 
 import Architecture.Aggregate
+import Architecture.DomainError
 import Events.*
 import AccountsDomain.Commands.*
 import Architecture.BaseEvent
@@ -13,37 +14,39 @@ class Account() : Aggregate() {
     var currentLedgerUuid : String = ""
     var balance : Int = 0
 
-    constructor(uuid: String = "", type: String = "") : this() {
-        enqueue(AccountCreated(uuid, type))
+    constructor(uuid: String = "", type: String = "", corrolationId : String = "") : this() {
+        enqueue(AccountCreated(uuid, type, corrolationId))
     }
 
     fun handle(cmd : BlockAccount) {
-        if(isClosed()) { throw Exception("Account is closed") }
+        if(isClosed()) { throw DomainError("Account is closed", "") }
         if(isBlocked()) { return@handle }
 
-        enqueue(AccountBlocked(uuid))
+        enqueue(AccountBlocked(uuid, cmd.corrolationId))
     }
 
     fun handle(cmd : UnblockAccount) {
-        if(isClosed()) { throw Exception("Account is closed!") }
+        if(isClosed()) { throw DomainError("Account is closed!", "") }
         if(!isBlocked()) { return@handle }
 
-        enqueue(AccountUnblocked(uuid))
+        enqueue(AccountUnblocked(uuid, cmd.corrolationId))
     }
 
     fun handle(cmd : CloseAccount) {
-        if(!open) { throw Exception("Account Already Closed!") }
+        if(!open) { throw DomainError("Account Already Closed!", "") }
 
-        enqueue(AccountClosed(uuid))
+        enqueue(AccountClosed(uuid, cmd.corrolationId))
     }
 
     fun handle(cmd : WithdrawFunds) {
-        if((balance - cmd.amount) < 0) { throw Exception("Not enough funds") }
+        if(isClosed()) { throw DomainError("Account is closed", cmd.corrolationId) }
+        if((balance - cmd.amount) < 0) { throw DomainError("Not enough funds", cmd.corrolationId) }
 
         enqueue(FundsWithdrawn(uuid, cmd.amount, cmd.corrolationId))
     }
 
     fun handle(cmd : DepositFunds) {
+        if(isClosed()) { throw DomainError("Account is closed", cmd.corrolationId) }
         enqueue(FundsDeposited(uuid, cmd.amount, cmd.corrolationId))
     }
 
