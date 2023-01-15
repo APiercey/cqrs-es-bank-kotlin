@@ -6,254 +6,337 @@
 	},
 	"item": [
 		{
-			"name": "Commands",
+			"name": "RESTful API",
 			"item": [
 				{
-					"name": "Accounts",
+					"name": "Commands",
 					"item": [
 						{
-							"name": "Open Account",
-							"event": [
+							"name": "Accounts",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();",
-											"pm.environment.set(\"accountUuid\", responseData.uuid);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "localhost:8080/open_account",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"open_account"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Block Account",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "localhost:8080/accounts/{{accountUuid}}/block",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"accounts",
-										"{{accountUuid}}",
-										"block"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Unblock Account",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "localhost:8080/accounts/{{accountUuid}}/unblock",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"accounts",
-										"{{accountUuid}}",
-										"unblock"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Close Account",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "localhost:8080/accounts/{{accountUuid}}/close",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"accounts",
-										"{{accountUuid}}",
-										"close"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Deposit Funds",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"amount\": 100\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"name": "Open Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let responseData = pm.response.json();",
+													"pm.environment.set(\"accountUuid\", responseData.uuid);"
+												],
+												"type": "text/javascript"
+											}
 										}
-									}
-								},
-								"url": {
-									"raw": "localhost:8080/accounts/{{accountUuid}}/deposit",
-									"host": [
-										"localhost"
 									],
-									"port": "8080",
-									"path": [
-										"accounts",
-										"{{accountUuid}}",
-										"deposit"
-									]
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/open_account",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"open_account"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Block Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/accounts/{{accountUuid}}/block",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"accounts",
+												"{{accountUuid}}",
+												"block"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Unblock Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/accounts/{{accountUuid}}/unblock",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"accounts",
+												"{{accountUuid}}",
+												"unblock"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Close Account",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/accounts/{{accountUuid}}/close",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"accounts",
+												"{{accountUuid}}",
+												"close"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Deposit Funds",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"amount\": 100\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/accounts/{{accountUuid}}/deposit",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"accounts",
+												"{{accountUuid}}",
+												"deposit"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Withdraw Funds",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"amount\": 25\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/accounts/{{accountUuid}}/withdraw",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"accounts",
+												"{{accountUuid}}",
+												"withdraw"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						},
 						{
-							"name": "Withdraw Funds",
-							"event": [
+							"name": "Transactions",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"amount\": 25\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"name": "Request Account Transfer",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let responseData = pm.response.json();",
+													"pm.environment.set(\"transactionUuid\", responseData.uuid);"
+												],
+												"type": "text/javascript"
+											}
 										}
-									}
-								},
-								"url": {
-									"raw": "localhost:8080/accounts/{{accountUuid}}/withdraw",
-									"host": [
-										"localhost"
 									],
-									"port": "8080",
-									"path": [
-										"accounts",
-										"{{accountUuid}}",
-										"withdraw"
-									]
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"amount\": 5,\n    \"sender_uuid\": \"06a1f8bd-12bf-4a45-bf36-6a7067c7476e\",\n    \"receiver_uuid\": \"2ed81944-b1dc-49fa-bfde-23893e054b06\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/transactions/account_transfer",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"transactions",
+												"account_transfer"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						}
 					]
 				},
 				{
-					"name": "Transactions",
+					"name": "Queries",
 					"item": [
 						{
-							"name": "Request Account Transfer",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"let responseData = pm.response.json();",
-											"pm.environment.set(\"transactionUuid\", responseData.uuid);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
+							"name": "Index Accounts",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"amount\": 5,\n    \"sender_uuid\": \"06a1f8bd-12bf-4a45-bf36-6a7067c7476e\",\n    \"receiver_uuid\": \"2ed81944-b1dc-49fa-bfde-23893e054b06\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
 								"url": {
-									"raw": "localhost:8080/transactions/account_transfer",
+									"raw": "localhost:8080/accounts",
 									"host": [
 										"localhost"
 									],
 									"port": "8080",
 									"path": [
-										"transactions",
-										"account_transfer"
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Account",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/accounts/{{accountUuid}}",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"accounts",
+										"{{accountUuid}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Index Transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/transactions",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show Transaction",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8080/transactions",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"transactions"
 									]
 								}
 							},
@@ -264,80 +347,438 @@
 			]
 		},
 		{
-			"name": "Queries",
+			"name": "GraphQL API",
 			"item": [
 				{
-					"name": "Index Accounts",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/accounts",
-							"host": [
-								"localhost"
+					"name": "Queries",
+					"item": [
+						{
+							"name": "GetAccounts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
 							],
-							"port": "8080",
-							"path": [
-								"accounts"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query {\n    GetAccounts {\n        uuid\n        type\n    }\n}",
+										"variables": ""
+									},
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api-graphql",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api-graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTransactions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query {\n    GetTransactions {\n        uuid\n        type\n    }\n}",
+										"variables": ""
+									},
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api-graphql",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api-graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetAccount",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query ($uuid: String!) {\n    GetAccount(uuid: $uuid) {\n        uuid\n        type\n        blocked\n        balance\n    }\n}",
+										"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\"\n}\""
+									},
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api-graphql",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api-graphql"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Show Account",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/accounts/{{accountUuid}}",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"accounts",
-								"{{accountUuid}}"
+					"name": "Mutations",
+					"item": [
+						{
+							"name": "Accounts",
+							"item": [
+								{
+									"name": "OpenAccount",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"let responseData = pm.response.json();",
+													"pm.environment.set(\"accountUuid\", responseData.data.OpenAccount.uuid);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation {\n    OpenAccount {\n        accepted\n        uuid\n    }\n}",
+												"variables": ""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "BlockAccount",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($uuid: String!) {\n    BlockAccount(uuid: $uuid) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\"\n}\""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UnblockAccount",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($uuid: String!) {\n    UnblockAccount(uuid: $uuid) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\"\n}\""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "CloseAccount",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($uuid: String!) {\n    CloseAccount(uuid: $uuid) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\"\n}\""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DepositFunds",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($uuid: String!, $amount: Int!) {\n    DepositFunds(uuid: $uuid, amount: $amount) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\",\n    \\\"amount\\\": 100\n}\""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "WithdrawFunds",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($uuid: String!, $amount: Int!) {\n    WithdrawFunds(uuid: $uuid, amount: $amount) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"uuid\\\": \\\"{{accountUuid}}\\\",\n    \\\"amount\\\": 5\n}\""
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Transactions",
+							"item": [
+								{
+									"name": "RequestAccountTransfer",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "graphql",
+											"graphql": {
+												"query": "mutation ($senderUuid: String!, $receiverUuid: String!, $amount : Int!) {\n    RequestAccountTransfer(senderUuid: $senderUuid, receiverUuid: $receiverUuid, amount: $amount) {\n        accepted\n    }\n}",
+												"variables": "\"{\n    \\\"senderUuid\\\": \\\"a3c9eeeb-35cc-4a88-a704-20924322215c\\\",\n    \\\"receiverUuid\\\": \\\"444766aa-ccbe-47a1-8462-1599837155a5\\\",\n    \\\"amount\\\": 100\n}\"\n\n"
+											},
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/api-graphql",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"api-graphql"
+											]
+										}
+									},
+									"response": []
+								}
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Index Transactions",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/transactions",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"transactions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Show Transaction",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/transactions",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"transactions"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		}
