@@ -412,7 +412,48 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query {\n    GetTransactions {\n        uuid\n        type\n    }\n}",
+										"query": "query {\n    GetTransactions {\n        uuid\n    }\n}",
+										"variables": ""
+									},
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/api-graphql",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api-graphql"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTransaction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "graphql",
+									"graphql": {
+										"query": "query ($uuid: String!) {\n    GetTransaction(uuid: $uuid) {\n        uuid\n    }\n}",
 										"variables": ""
 									},
 									"options": {

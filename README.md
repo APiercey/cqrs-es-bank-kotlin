@@ -120,46 +120,129 @@ You can either run this using the `Queries` tab or create a User-Defined project
 The benefit of using a User-Defined projection is that you can continuously update the report
 at the expense of write-time efficiency.
 
-## API Server
-The API accepts JSON and returns JSON. All commands and queries can be found in the postman collection.
+## GraphQL & RESTful APIs
 
-### Commands
+All commands/mutations and queries can be found in the postman collection.
+
+The RESTful API accepts JSON and returns JSON.
+
+The GraphQL uses typical GQL.
+
+### Mutations/Commands
+
+#### Open Account
+Opens a simple account. Returns the new account UUID.
+
+##### REST
 ```
 POST /accounts
 ```
-Opens a simple account. Returns the new account UUID.
 
+##### GraphQL
+```
+mutation {
+    OpenAccount {
+        accepted
+        uuid
+    }
+}
+```
+
+#### Block Account
+Blocks the account. Blocked accounts cannot withdrawal funds but can deposit/receive funds.
+##### REST
 ```
 POST /accounts/{account_uuid}/block
 ```
-Blocks the account. Blocked accounts cannot withdrawal money but can deposit/receive money.
 
+##### GraphQL
+```
+mutation ($uuid: String!) {
+    BlockAccount(uuid: $uuid) {
+        accepted
+    }
+}
+```
+
+#### Unblock Account
+Unblocks the account. The account may continue withdrawing funds.
+
+##### REST
 ```
 POST /accounts/{account_uuid}/unblock
 ```
-Unblocks the account.
 
+##### GraphQL
+```
+mutation ($uuid: String!) {
+    UnblockAccount(uuid: $uuid) {
+        accepted
+    }
+}
+```
+
+
+#### Close Account
+Closes the account. Closed accounts cannot be re-opened nor withdrawal or deposit money.
+
+##### REST
 ```
 POST /accounts/{account_uuid}/close
 ```
-Closes the account. Closed accounts cannot be re-opened nor withdrawal or deposit money.
 
+##### GraphQL
+```
+mutation ($uuid: String!) {
+    CloseAccount(uuid: $uuid) {
+        accepted
+    }
+}
+```
+
+#### Withdraw Funds
+Withdraws an amount from the account. The balance of the account cannot go below zero.
+
+##### REST
 ```
 POST /accounts/{account_uuid}/withdraw
 {
     "amount": Integer
 }
 ```
-Withdraws an amount from the account. The balance of the account cannot go below zero.
+##### GraphQL
+```
+mutation ($uuid: String!, $amount: Int!) {
+    WithdrawFunds(uuid: $uuid, amount: $amount) {
+        accepted
+    }
+}
+```
 
+#### Deposit Funds
+Deposits an amount into the account. There is no upper limit to the amount an account can have ;)
+
+##### REST
 ```
 POST /accounts/{account_uuid}/deposit
 {
     "amount": Integer
 }
 ```
-Deposits an amount into the account. There is no upper limit to the amount an account can have ;)
+##### GraphQL
+```
+mutation ($uuid: String!, $amount: Int!) {
+    DepositFunds(uuid: $uuid, amount: $amount) {
+        accepted
+    }
+}
+```
 
+#### Request Account Transfer
+Creates a transaction to move money between two accounts. Returns the new Transaction UUID.
+
+If the transaction cannot be completed, money will be returned to any accounts that had their money
+withdrawn.
+##### REST
 ```
 POST /transactions/account_transfer
 {
@@ -168,28 +251,100 @@ POST /transactions/account_transfer
     "amount": Integer
 }
 ```
-Creates a transaction to move money between two accounts. Returns the new Transaction UUID.
 
-If the transaction cannot be completed, money will be returned to any accounts that had their money
-withdrawn.
+##### GraphQL
+```
+mutation ($senderUuid: String!, $receiverUuid: String!, $amount : Int!) {
+    RequestAccountTransfer(senderUuid: $senderUuid, receiverUuid: $receiverUuid, amount: $amount) {
+        accepted
+        uuid
+    }
+}
+```
 
 ### Queries
+
+#### Get Accounts
+Returns a list of all accounts.
+
+##### REST
 ```
 GET /accounts
 ```
-Returns a list of all accounts.
 
+##### GraphQL
+```
+query {
+    GetAccounts {
+        uuid
+        type
+        balance
+        blocked
+        open
+    }
+}
+```
+
+#### Get Account
+Returns an account.
+
+##### REST
 ```
 GET /accounts/{account_uuid}
 ```
-Returns an account.
 
+##### GraphQL
+```
+query ($uuid: String!) {
+    GetAccount(uuid: $uuid) {
+        uuid
+        type
+        balance
+        blocked
+        open
+    }
+}
+```
+
+#### Get Transactions
+Returns a list of transactions accounts. Transactions can either be `PENDING`, `COMPLETED`, or `FAILED`.
+
+##### REST
 ```
 GET /transactions
 ```
-Returns a list of transactions accounts. Transactions can either be `PENDING`, `COMPLETED`, or `FAILED`.
 
+##### GraphQL
+```
+query {
+    GetTransactions {
+        uuid
+        senderUuid
+        receiverUuid
+        amount
+        status
+    }
+}
+```
+
+#### Get Transaction
+Returns a transaction.
+
+##### REST
 ```
 GET /transactions/{transaction_uuid}
 ```
-Returns a transaction.
+
+##### GraphQL
+```
+query ($uuid: String!) {
+    GetTransaction(uuid: $uuid) {
+        uuid
+        senderUuid
+        receiverUuid
+        amount
+        status
+    }
+}
+```
+
