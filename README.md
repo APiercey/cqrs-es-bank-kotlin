@@ -21,7 +21,7 @@ It also explores a few Kotlin features for fun :)!
         - [Persistent Subscriptions](#persistent-subscriptions)
         - [User-Defined/System Projections](#user-defined-system-projections)
 - [GraphQL and RESTful APIs](#graphql-and-restful-apis)
-  - [Mutations/Commands](#mutations-commands)
+  - [Mutations and Commands](#mutations-and-commands)
     - [Open Account](#open-account)
     - [Block Account](#block-account)
     - [Unblock Account](#unblock-account)
@@ -150,7 +150,7 @@ The RESTful API accepts JSON and returns JSON.
 
 The GraphQL uses typical GQL.
 
-### Mutations/Commands
+### Mutations and Commands
 
 #### Open Account
 Opens a simple account. Returns the new account UUID.
