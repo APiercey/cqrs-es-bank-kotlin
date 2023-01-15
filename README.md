@@ -13,6 +13,28 @@ The purpose is to illustrate patterns how to achieve a number of patterns. This 
 
 It also explores a few Kotlin features for fun :)!
 
+
+* [Dependencies](#dependencies)
+    + [Starting MongoDB with Docker](#starting-mongodb-with-docker)
+    + [Starting EventStoreDB with Docker](#starting-eventstoredb-with-docker)
+    + [Setting Up Server](#setting-up-server)
+        - [Persistent Subscriptions](#persistent-subscriptions)
+        - [User-Defined/System Projections](#user-defined-system-projections)
+* [GraphQL & RESTful APIs](#graphql---restful-apis)
+    + [Mutations/Commands](#mutations-commands)
+        - [Open Account](#open-account)
+        - [Block Account](#block-account)
+        - [Unblock Account](#unblock-account)
+        - [Close Account](#close-account)
+        - [Withdraw Funds](#withdraw-funds)
+        - [Deposit Funds](#deposit-funds)
+        - [Request Account Transfer](#request-account-transfer)
+    + [Queries](#queries)
+        - [Get Accounts](#get-accounts)
+        - [Get Account](#get-account)
+        - [Get Transactions](#get-transactions)
+        - [Get Transaction](#get-transaction)
+
 ## Dependencies
 There are only two dependencies outside of this project. MongoDB and EventStoreDB.
 
