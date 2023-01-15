@@ -18,7 +18,6 @@ import com.google.gson.Gson
 fun startWebServer(appTree: AppTree) {
     val database = appTree.mongoDatabase()
     val bus = appTree.bus()
-
     embeddedServer(Netty, port = 8080) {
         val gson = Gson()
 
