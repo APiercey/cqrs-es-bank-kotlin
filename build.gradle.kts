@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
+
     application
 }
 
@@ -19,7 +20,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:2.2.1")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("org.litote.kmongo:kmongo:4.8.0")
-
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.apurebase:kgraphql:0.18.1")
+    implementation("com.apurebase:kgraphql-ktor:0.18.1")
 }
 
 tasks.test {
@@ -27,7 +30,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 application {

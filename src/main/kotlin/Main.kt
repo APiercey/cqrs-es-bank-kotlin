@@ -1,5 +1,6 @@
 import ReadDomain.startAccountReadProjection
 import ReadDomain.startTransactionsReadProjection
+import Server.startWebServer
 import TransactionsDomain.AccountTransfer.startAccountTransferEventsHandler
 
 fun main(args: Array<String>) {
